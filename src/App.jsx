@@ -17,15 +17,22 @@ function reducer(state, action) {
       return { ...state, balance: state.balance + 150 };
     case "withdraw":
       return { ...state, balance: state.balance - 50 };
+
     case "requestLoan":
-      if (state.isActive && state.loan === 0)
-        return { ...state, loan: 5000, balance: state.balance + 5000 };
+      if (state.isActive && state.loan === 0) {
+        const updatedLoan = state.loan + 5000;
+        return {
+          ...state,
+          loan: updatedLoan,
+          balance: state.balance + updatedLoan,
+        };
+      }
       break;
     case "payLoan":
       if (state.isActive && state.loan > 0)
         return {
           ...state,
-          balance: state.balance - 5000,
+          balance: state.balance - state.loan,
           loan: state.loan - 5000,
         };
       break;
@@ -97,7 +104,7 @@ function App() {
           onClick={() => {
             withdraw();
           }}
-          disabled={!state.isActive}
+          disabled={!state.isActive || state.balance <= 0}
         >
           Withdraw 50
         </button>
